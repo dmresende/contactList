@@ -1,20 +1,28 @@
-export const colors = {
-    gray: {
-        100: "#F4F4F5",
-        200: "#E4E4E7",
-        300: "#D4D4D8",
-        400: "#A1A1AA",
-        500: "#71717A",
-        600: "#52525B",
-        800: "#27272A",
-        900: "#18181B",
-        950: "#09090B",
-    },
+/**
+ * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
+ * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ */
 
-    green: {
-        300: "#2DD4BF",
-        900: "#042F2E",
-    },
+const tintColorLight = '#0a7ea4';
+const tintColorDark = '#fff';
+
+export const Colors = {
+  light: {
+    text: '#11181C',
+    background: '#fff',
+    tint: tintColorLight,
+    icon: '#687076',
+    tabIconDefault: '#687076',
+    tabIconSelected: tintColorLight,
+  },
+  dark: {
+    text: '#ECEDEE',
+    background: '#151718',
+    tint: tintColorDark,
+    icon: '#9BA1A6',
+    tabIconDefault: '#9BA1A6',
+    tabIconSelected: tintColorDark,
+  },
     darkOlli: {
       "black": "#000000",
       "white": "#FFFFFF",
@@ -189,4 +197,5 @@ export const colors = {
     "gray-900": "#282828",
     "gray-1000": "#101010"
   }
+
 };

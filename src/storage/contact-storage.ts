@@ -6,7 +6,9 @@ export type ContactStorage = {
     id: string;
     name: string;
     phone: string;
+    email: string;
     photo?: string;
+    ative: boolean;
 };
 
 async function get(): Promise<ContactStorage[]> {
@@ -38,7 +40,7 @@ async function remove(id: string) {
     }
 }
 
-//Crear desabilit
+//Criar desabilit
 
 export const contactStorage = {
     get,
