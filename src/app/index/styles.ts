@@ -90,8 +90,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
      borderWidth: 2,
-    borderColor: colors.lightOlli["indigo-600"],
+     borderColor: colors.lightOlli["gray-800"],
   },
-  modalData: {
+  active: {
+    fontSize: 10,
   },
 });

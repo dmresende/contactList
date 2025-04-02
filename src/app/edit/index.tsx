@@ -1,5 +1,5 @@
 import { Alert, Image, KeyboardAvoidingView, Text, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { styles } from "./styles";
 import { Input } from "@/src/components/Input/Input";
 import { Button } from "@/src/components/button/button";
@@ -7,11 +7,36 @@ import { contactStorage } from "@/src/storage/contact-storage";
 import { useState } from "react";
 import { Colors } from "@/src/constants/Colors";
 
-export default function Add() {
+export default function Edit() {
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [photo, setPhoto] = useState<string>("");
+
+  const params = useLocalSearchParams();
+
+  const paramsId = params.id;
+  console.log("🚀 ~ Edit ~ Params:", params.id)
+
+
+
+
+  const getContact = async (id: string) => {
+    try {
+      const response = await contactStorage.getById(id);
+
+
+      setContact(response);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+
+
 
   const validateData = async () => {
     const data = await contactStorage.get();
@@ -64,28 +89,12 @@ export default function Add() {
     }
   }
 
-  // const generateRandomPhoto = () => {
-  //   const photoContact = contactStorage.get();
-
-  //   const data = photoContact.then((value) => {
-  //     console.log('value: ', value);
-  //   });
-
-  //   if (!data) {
-  //     const test = Math.floor(Math.random() * 2);
-  //     const photo: string = 'https://i.pravatar.cc/300?u=a' + test;
-  //     return setPhoto(photo);
-  //   }
-
-  //   return
-  // }
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>New</Text>
+        <Text style={styles.title}>Edit</Text>
       </View>
-      <Text style={styles.label}>Register a contact name</Text>
+      <Text style={styles.label}>Edite a contact</Text>
       <View style={styles.contentBody}>
         <View style={styles.avatarContainer}>
           <Image style={styles.avatar}
@@ -124,7 +133,7 @@ export default function Add() {
             />
             <Button
               title="Cancel"
-              onPress={() => router.back()}
+              onPress={() => router.navigate("..")}
             />
           </View>
         </KeyboardAvoidingView>

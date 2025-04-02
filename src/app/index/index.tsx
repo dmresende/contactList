@@ -17,7 +17,6 @@ import { router, useFocusEffect } from "expo-router";
 
 import { styles } from "./styles";
 import { Colors } from "@/src/constants/Colors";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 type IContact = {
@@ -71,6 +70,15 @@ export default function ContactsScreen() {
 
   const handleDeleteContact = async (id: string) => {
     try {
+
+      if (contact.ative) {
+        Alert.alert(
+          "Attention",
+          "You can only delete inactive contacts"
+        )
+        return;
+      }
+
       Alert.alert(
         "Attention",
         "Do you really want to delete this contact",
@@ -92,6 +100,10 @@ export default function ContactsScreen() {
     }
   }
 
+  const handleEditContact = (id: string) => {
+    router.navigate({ pathname: "/edit", params: { id } });
+  }
+
   const contactDetails = (selected: ContactStorage) => {
     console.log('selected: ', selected);
 
@@ -105,9 +117,6 @@ export default function ContactsScreen() {
     }, [])
   );
 
-  const removeValue = async () => {
-    try { await AsyncStorage.removeItem('@CONTACT_STORAGE_KEY') } catch (e) { console.log(e) }
-  }
 
   return (
     <View style={styles.container}>
@@ -162,29 +171,35 @@ export default function ContactsScreen() {
                   color={Colors.lightOlli["indigo-600"]}
                 />
               </TouchableOpacity>
+
             </View>
+
             <View style={styles.modalActive}>
-              <View style={styles.modalData}>
+              <View >
                 <ThemedText type="subtitle">{contact.name}</ThemedText>
                 <ThemedText type="default">{contact.phone}</ThemedText>
                 <ThemedText type="default">{contact.email}</ThemedText>
               </View>
+
               <ThemedText type="subtitle">
-
                 {contact.ative == true
-                  ? <MaterialIcons
-                    name="circle"
-                    size={20}
-                    color={Colors.lightOlli["green-500"]}
-                  />
-
-                  : <MaterialIcons
-                    name="circle"
-                    size={20}
-                    color={Colors.lightOlli["gray-500"]}
-                  />}
+                  ? <ThemedText style={styles.active} >Active</ThemedText>
+                  : <ThemedText style={styles.active} >Deactivate</ThemedText>
+                }
               </ThemedText>
+              <TouchableOpacity onPress={() => {
+                showModal ? setShowModal(false) : setShowModal(true)
+
+                handleEditContact(contact.id)
+              }} >
+                <MaterialIcons
+                  name="edit"
+                  size={20}
+                  color={Colors.lightOlli["indigo-600"]}
+                />
+              </TouchableOpacity>
             </View>
+
             <View style={styles.modalFooter}>
               <OptionButton
                 name="Call"
