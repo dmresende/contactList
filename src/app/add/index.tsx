@@ -13,66 +13,53 @@ export default function Add() {
   const [email, setEmail] = useState<string>("");
   const [photo, setPhoto] = useState<string>("");
 
-  const data = contactStorage.get();
+  const validateData = async () => {
+    const data = await contactStorage.get();
 
-  const validateName = () => {
-    data.then((value) => {
-      value.find((item) => item.name === name) ? Alert.alert("Atenção", "Já existe um contato com esse nome!") : null
-      return
-    })
+    const validaNome = data.some((item) => item.name === name);
+    const validaTelefone = data.some((item) => item.phone === phone);
+    const validaEmail = data.some((item) => item.email === email);
+
+    if (validaNome) {
+      Alert.alert("Attention", "There is already a contact with that name")
+      return false;
+    } else if (validaTelefone) {
+      Alert.alert("Attention", "There is already a contact with this phone!")
+      return false;
+    } else if (validaEmail) {
+      Alert.alert("Attention", "There is already a contact with this email!")
+      return false;
+    }
+    return true
   }
 
-  const validatePhone = () => {
-    data.then((value) => {
-      value.map((item) => {
-        if (item.phone === phone) {
-          return Alert.alert("Atenção", "Já existe um contato com esse telefone!");
-        }
-      })
-    })
-  }
 
-  const validateEmail = () => {
-    data.then((value) => {
-      value.map((item) => {
-        if (item.email === email) {
-          return Alert.alert("Atenção", "Já existe um contato com esse email!");
-        }
-      })
-    })
-  }
 
   const handleAddContact = async () => {
     try {
-      //TODO - VALIDAR DADOS DUPLICADOS
-      validateName();
+      const isvalid = await validateData();
 
-      if (!name || !phone || !email) {
-        return Alert.alert("Atenção", "Preencha todos os campos!");
+      if (!name || !phone || !email)
+        return Alert.alert("Attention", "Fill in all fields!");
+
+      if (isvalid) {
+        console.log("🚀 ~ handleAddContact ~ validateData:", validateData)
+        await contactStorage.save({
+          id: new Date().getTime().toString(),
+          name,
+          phone,
+          email,
+          photo,
+          ative: true,
+        })
+
+        Alert.alert("Success", "Contact saved successfully!", [
+          {
+            text: "Ok",
+            onPress: () => router.back()
+          }
+        ]);
       }
-      if (!phone) {
-        return Alert.alert("Atenção", "Preencha todos os campos!");
-      }
-      if (!email) {
-        return Alert.alert("Atenção", "Preencha todos os campos!");
-      }
-
-      await contactStorage.save({
-        id: new Date().getTime().toString(),
-        name,
-        phone,
-        email,
-        photo,
-        ative: true,
-      })
-
-
-      Alert.alert("Sucesso", "Contato salvo com sucesso!", [
-        {
-          text: "Ok",
-          onPress: () => router.back()
-        }
-      ]);
 
     } catch (errro) {
       console.log(errro);
@@ -94,7 +81,6 @@ export default function Add() {
 
   //   return
   // }
-
 
   return (
     <View style={styles.container}>

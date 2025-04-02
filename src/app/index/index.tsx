@@ -183,9 +183,6 @@ export default function ContactsScreen() {
                     size={20}
                     color={Colors.lightOlli["gray-500"]}
                   />}
-
-
-
               </ThemedText>
             </View>
             <View style={styles.modalFooter}>
