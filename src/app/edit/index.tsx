@@ -9,21 +9,14 @@ import { Colors } from "@/src/constants/Colors";
 import { IContact } from "../index";
 
 export default function Edit() {
-  const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [photo, setPhoto] = useState<string>("");
   const [contact, setContact] = useState<IContact>();
-
-
-
-  //remover
-  const [text, onChangeText] = useState('Useless Text');
-  const [number, onChangeNumber] = useState('');
-  //
-
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
+  const [email, setEmail] = useState("");
   const params = useLocalSearchParams();
   const paramsId = params.id as string;
+
+  console.log(contact)
 
   const getContact = async () => {
     try {
@@ -36,14 +29,13 @@ export default function Edit() {
     }
   }
 
-
-
   const validateData = async () => {
     const data = await contactStorage.get();
 
-    const validaNome = data.some((item) => item.name === name);
-    const validaTelefone = data.some((item) => item.phone === phone);
-    const validaEmail = data.some((item) => item.email === email);
+    //TODO - validar se outro contato usa alguns desses campos,(ignorar o usuario editado)
+    const validaNome = data.some((item) => item.name === contact?.name);
+    const validaTelefone = data.some((item) => item.phone === contact?.phone);
+    const validaEmail = data.some((item) => item.email === contact?.email);
 
     if (validaNome) {
       Alert.alert("Attention", "There is already a contact with that name")
@@ -58,32 +50,31 @@ export default function Edit() {
     return true
   }
 
-  const handleAddContact = async () => {
+  const handleEditContact = async () => {
     try {
       const isvalid = await validateData();
 
-      if (!name || !phone || !email)
-        return Alert.alert("Attention", "Fill in all fields!");
+      // if (!name || !phone || !email)
+      //   return Alert.alert("Attention", "Fill in all fields!");
 
       if (isvalid) {
         console.log("🚀 ~ handleAddContact ~ validateData:", validateData)
         await contactStorage.save({
-          id: new Date().getTime().toString(),
-          name,
-          phone,
-          email,
-          photo,
+          id: paramsId,
+          name: contact?.name,
+          phone: contact?.phone,
+          email: contact?.email,
+          photo: contact?.photo,
           ative: true,
         })
 
-        Alert.alert("Success", "Contact saved successfully!", [
+        Alert.alert("Success", "Contact edited successfully!", [
           {
             text: "Ok",
             onPress: () => router.back()
           }
         ]);
       }
-
     } catch (errro) {
       console.log(errro);
     }
@@ -94,7 +85,6 @@ export default function Edit() {
     console.log("🚀 ~ useEffect ~ paramsId:", paramsId)
     getContact()
   }, [paramsId]);
-
 
 
   return (
@@ -117,13 +107,13 @@ export default function Edit() {
           <View style={styles.form} >
             <Input
               placeholder="Name"
-              onChangeText={setName}
-              value={contact?.name ?? ''}
+              onChangeText={(value) => setContact({ ...contact, name: value })}
+              defaultValue={contact?.name}
             />
             <Input
               placeholder='Phone'
-              onChangeText={setPhone}
-              value={contact?.phone ?? ''}
+              onChangeText={(value) => setContact({ ...contact, phone: value })}
+              defaultValue={contact?.phone}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="phone-pad"
@@ -131,25 +121,16 @@ export default function Edit() {
             />
             <Input
               placeholder="e-mail"
-              onChangeText={setEmail}
-              value={contact?.email ?? ''}
+              onChangeText={(value) => setContact({ ...contact, email: value })}
+              defaultValue={contact?.email}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
             />
 
-            <Input
-              onChangeText={onChangeNumber}
-              value={number}
-              placeholder="TESTE INPUT"
-            />
-
-
             <Button
               title="Editar"
-              onPress={() => {
-                console.log("Editado")
-              }}
+              onPress={handleEditContact}
               color={Colors.lightOlli["indigo-600"]}
             />
             <Button

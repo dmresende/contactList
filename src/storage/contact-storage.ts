@@ -19,18 +19,6 @@ async function get(): Promise<ContactStorage[]> {
 }
 
 
-//TODO - ajusta func de bucar por id
-// async function getById(id: string) {
-//    try{
-//      const storage = await get();
-//      const filtered = storage.filter((contact) => contact.id == id);
-
-//      await AsyncStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(filtered));
-//    }catch (error) {
-//        console.log(error);
-//    }
-// }
-
 async function save(newContact: ContactStorage) {
     try {
         const storage = await get();
@@ -53,11 +41,8 @@ async function remove(id: string) {
     }
 }
 
-//Criar desabilit
-
 export const contactStorage = {
     get,
     save,
     remove,
-    // getById,
 }
