@@ -5,21 +5,22 @@ import {
   TouchableOpacity,
   Image,
   Modal,
-  Alert
+  Alert,
+  Switch
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import { MaterialIcons } from '@expo/vector-icons';
 
-import { ThemedText } from "@/src/components/ThemedText";
 import { contactStorage, ContactStorage } from "@/src/storage/contact-storage";
-import { OptionButton } from "@/src/components/Option/Option";
+import { OptionButton } from "@/src/components/OptionButton/OptionButton";
 import { router, useFocusEffect } from "expo-router";
 
 import { styles } from "./styles";
 import { Colors } from "@/src/constants/Colors";
+import { colors } from "@/styles/Colors";
 
 
-type IContact = {
+export type IContact = {
   id: string;
   name: string;
   phone: string;
@@ -37,7 +38,6 @@ export default function ContactsScreen() {
   const getContacts = async () => {
     try {
       const response = await contactStorage.get();
-
 
       setContacts(response);
     } catch (error) {
@@ -117,14 +117,13 @@ export default function ContactsScreen() {
     }, [])
   );
 
-
   return (
     <View style={styles.container}>
 
       <View style={styles.containerHeader}>
-        <ThemedText type="title" style={styles.containerHeaderTitle}>
+        <Text style={styles.containerHeaderTitle}>
           Contacts
-        </ThemedText>
+        </Text>
         <View style={styles.containerHeaderOptions}>
           <TouchableOpacity onPress={() => router.navigate("/add")}>
             <MaterialIcons name="add" size={32} color={"#FFF"} />
@@ -140,9 +139,11 @@ export default function ContactsScreen() {
 
       {contacts.length == 0
         ?
-        <ThemedText style={styles.emptyList} type="default">No contacts found
-        </ThemedText>
-        : <FlatList
+        <Text style={styles.emptyList} >No contacts found
+        </Text>
+        :
+        // ver porque nao ta vindo contatos
+        <FlatList
           data={contacts}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -157,47 +158,63 @@ export default function ContactsScreen() {
               <Text style={styles.contactText}>{item.name}</Text>
             </TouchableOpacity>
           )}
-        />}
+        />
+      }
 
       <Modal transparent visible={showModal} animationType="slide">
         <View style={styles.modal}>
           <View style={styles.modalContent}>
+
             <View style={styles.modalHeader}>
-              <ThemedText type="title" style={styles.modalCategory}>Details</ThemedText>
-              <TouchableOpacity onPress={() => setShowModal(false)} >
-                <MaterialIcons
-                  name="close"
-                  size={20}
-                  color={Colors.lightOlli["indigo-600"]}
-                />
-              </TouchableOpacity>
+
+              <Text style={styles.modalCategory}>Details</Text>
+
+              <View style={styles.modalHeaderOptions}>
+
+                <TouchableOpacity onPress={() => {
+                  showModal ? setShowModal(false) : setShowModal(true)
+
+                  handleEditContact(contact.id)
+                }} >
+                  <MaterialIcons
+                    name="edit"
+                    size={20}
+                    color={Colors.lightOlli["indigo-600"]}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowModal(false)} >
+                  <MaterialIcons
+                    name="close"
+                    size={20}
+                    color={Colors.lightOlli["indigo-600"]}
+                  />
+                </TouchableOpacity>
+              </View>
 
             </View>
 
             <View style={styles.modalActive}>
               <View >
-                <ThemedText type="subtitle">{contact.name}</ThemedText>
-                <ThemedText type="default">{contact.phone}</ThemedText>
-                <ThemedText type="default">{contact.email}</ThemedText>
+                <Text style={styles.infcads} >{contact.name}</Text>
+                <Text style={styles.infcads}>{contact.phone}</Text>
+                <Text style={styles.infcads}>{contact.email}</Text>
               </View>
 
-              <ThemedText type="subtitle">
+              {/* //TODO - REMOVER, OU VER SE PRECISO REMOVER ESSE TEXT */}
+              <Text >
                 {contact.ative == true
-                  ? <ThemedText style={styles.active} >Active</ThemedText>
-                  : <ThemedText style={styles.active} >Deactivate</ThemedText>
+                  ? <Text style={styles.active} >Active</Text>
+                  : <Text style={styles.active} >Deactivate</Text>
                 }
-              </ThemedText>
-              <TouchableOpacity onPress={() => {
-                showModal ? setShowModal(false) : setShowModal(true)
+              </Text>
 
-                handleEditContact(contact.id)
-              }} >
-                <MaterialIcons
-                  name="edit"
-                  size={20}
-                  color={Colors.lightOlli["indigo-600"]}
-                />
-              </TouchableOpacity>
+              <Switch
+                trackColor={{ false: '#767577', true: colors.lightOlli["indigo-500"] }}
+                thumbColor={styles.active ? colors.lightOlli["indigo-600"] : '#f4f3f4'}
+                value={contact.ative}
+                onValueChange={(value) => setContact({ ...contact, ative: value })}
+              />
+
             </View>
 
             <View style={styles.modalFooter}>
@@ -221,4 +238,3 @@ export default function ContactsScreen() {
     </View >
   );
 };
-

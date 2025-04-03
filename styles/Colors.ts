@@ -1,3 +1,9 @@
+
+
+//TODO - definir qual arquivo  cor usar
+
+
+
 export const colors = {
     gray: {
         100: "#F4F4F5",

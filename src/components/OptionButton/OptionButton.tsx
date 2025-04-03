@@ -6,7 +6,8 @@ import { Colors } from "@/src/constants/Colors";
 
 type OptionButtonProps = {
   name: string;
-  icon: keyof typeof MaterialIcons.glyphMap; //tpo apropriado para icones usados no material icon, nese caso ele poderia retornar algo diferente de uma string por isso deve ser o tipo apropriado 
+  //INFOR: tpo apropriado para icones usados no material icon, nese caso ele poderia retornar algo diferente de uma string por isso deve ser o tipo apropriado 
+  icon: keyof typeof MaterialIcons.glyphMap;
   variant: "primary" | "secondary";
   onPress?: () => void;
 };

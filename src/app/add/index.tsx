@@ -85,7 +85,7 @@ export default function Add() {
       <View style={styles.header}>
         <Text style={styles.title}>New</Text>
       </View>
-      <Text style={styles.label}>Register a contact name</Text>
+      <Text style={styles.label}>Register a new contact</Text>
       <View style={styles.contentBody}>
         <View style={styles.avatarContainer}>
           <Image style={styles.avatar}

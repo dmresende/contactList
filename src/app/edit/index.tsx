@@ -3,39 +3,40 @@ import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { styles } from "./styles";
 import { Input } from "@/src/components/Input/Input";
 import { Button } from "@/src/components/button/button";
-import { contactStorage } from "@/src/storage/contact-storage";
+import { ContactStorage, contactStorage } from "@/src/storage/contact-storage";
 import { useState } from "react";
 import { Colors } from "@/src/constants/Colors";
+import { IContact } from "../index";
 
 export default function Edit() {
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [photo, setPhoto] = useState<string>("");
+  // const [contact, setContact] = useState<IContact>({} as ContactStorage);
+
 
   const params = useLocalSearchParams();
 
-  const paramsId = params.id;
+  const paramsId = params.id as string;
   console.log("🚀 ~ Edit ~ Params:", params.id)
 
 
 
-
-  const getContact = async (id: string) => {
+  const getContact = () => {
     try {
-      const response = await contactStorage.getById(id);
+      const response = JSON.stringify(contactStorage.getById(paramsId));
+
+      const teste = response.includes(paramsId);
+      console.log("🚀 ~ getContact ~ teste:", teste)
 
 
-      setContact(response);
 
+      // setContact(response);
     } catch (error) {
       console.log(error);
     }
   }
-
-
-
-
 
 
   const validateData = async () => {
@@ -112,7 +113,7 @@ export default function Edit() {
               onChangeText={setName}
             />
             <Input
-              placeholder="DDD + Number"
+              placeholder='Phone'
               onChangeText={setPhone}
               autoCapitalize="none"
               autoCorrect={false}
@@ -135,6 +136,16 @@ export default function Edit() {
               title="Cancel"
               onPress={() => router.navigate("..")}
             />
+
+
+            <Button
+              title="Remover"
+              onPress={() => {
+                JSON.stringify(getContact());
+              }}
+            />
+
+
           </View>
         </KeyboardAvoidingView>
       </View>

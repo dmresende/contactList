@@ -19,7 +19,8 @@ export const styles = StyleSheet.create({
   },
   containerHeaderTitle: {
     color: "#FFF",
-    margin: 20
+    margin: 20,
+    fontSize: 25
   },
   containerHeaderOptions: {
     display: "flex",
@@ -67,6 +68,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontWeight: "500",
     color: colors.gray[100],
+    fontSize: 20,
   },
   modalFooter: {
     flexDirection: "row",
@@ -94,5 +96,17 @@ export const styles = StyleSheet.create({
   },
   active: {
     fontSize: 10,
+    color: "#FFF",
   },
+  infcads:{
+    alignItems: "center",
+    marginBottom: 10,
+    color: "#FFF",
+  },
+  modalHeaderOptions:{
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+    
+  }
 });
