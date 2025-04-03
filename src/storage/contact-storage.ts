@@ -20,16 +20,16 @@ async function get(): Promise<ContactStorage[]> {
 
 
 //TODO - ajusta func de bucar por id
-async function getById(id: string) {
-   try{
-     const storage = await get();
-     const filtered = storage.filter((contact) => contact.id == id);
+// async function getById(id: string) {
+//    try{
+//      const storage = await get();
+//      const filtered = storage.filter((contact) => contact.id == id);
 
-     await AsyncStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(filtered));
-   }catch (error) {
-       console.log(error);
-   }
-}
+//      await AsyncStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(filtered));
+//    }catch (error) {
+//        console.log(error);
+//    }
+// }
 
 async function save(newContact: ContactStorage) {
     try {
@@ -57,7 +57,7 @@ async function remove(id: string) {
 
 export const contactStorage = {
     get,
-    getById,
     save,
     remove,
+    // getById,
 }
