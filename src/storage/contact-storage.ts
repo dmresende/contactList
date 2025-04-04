@@ -18,7 +18,6 @@ async function get(): Promise<ContactStorage[]> {
     return response;
 }
 
-
 async function save(newContact: ContactStorage) {
     try {
         const storage = await get();
@@ -29,6 +28,17 @@ async function save(newContact: ContactStorage) {
         console.log(error);
     }
 }
+
+// async function save(contactID: ContactStorage) {
+//     try {
+//         const storage = await get();
+//         const update = JSON.stringify([...storage, newContact]);
+
+//         await AsyncStorage.setItem(CONTACT_STORAGE_KEY, update);
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 async function remove(id: string) {
     try {
@@ -41,8 +51,23 @@ async function remove(id: string) {
     }
 }
 
+async function update(id: string, newContact: ContactStorage) {
+    try {
+        const storage = await get();
+        const index = storage.findIndex((contact) => contact.id === id);
+        const update = [...storage];
+        update[index] = newContact;
+        await AsyncStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(update));
+        console.log("🚀 ~ update ~ JSON.stringify(update):", JSON.stringify(update))
+        console.log("🚀 ~ update ~ Qual index? ", index)
+    } catch (error) {
+        console.log(error);
+    }
+}
+  
 export const contactStorage = {
     get,
     save,
     remove,
+    update,
 }

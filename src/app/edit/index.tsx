@@ -8,15 +8,23 @@ import { useEffect, useState } from "react";
 import { Colors } from "@/src/constants/Colors";
 import { IContact } from "../index";
 
+
+//TODO- AJUSTAR DEPOIS O EDITAR POIS ESTOU COM DIFICULDADE DE ENTENDER COMO ATUALIZAR O INDEX ESPECÓFICAMENTE, 
+//INF - Está salvando duplicado no momento
+
 export default function Edit() {
-  const [contact, setContact] = useState<IContact>();
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
-  const [email, setEmail] = useState("");
   const params = useLocalSearchParams();
   const paramsId = params.id as string;
+  const [newContact, setNewContact] = useState<IContact>({
+    id: paramsId,
+    name: '',
+    phone: '',
+    email: '',
+    photo: '',
+    ative: true,
+  });
 
-  console.log(contact)
+  const [contact, setContact] = useState<IContact>();
 
   const getContact = async () => {
     try {
@@ -33,9 +41,9 @@ export default function Edit() {
     const data = await contactStorage.get();
 
     //TODO - validar se outro contato usa alguns desses campos,(ignorar o usuario editado)
-    const validaNome = data.some((item) => item.name === contact?.name);
-    const validaTelefone = data.some((item) => item.phone === contact?.phone);
-    const validaEmail = data.some((item) => item.email === contact?.email);
+    const validaNome = data.some((item) => item.name === newContact?.name);
+    const validaTelefone = data.some((item) => item.phone === newContact?.phone);
+    const validaEmail = data.some((item) => item.email === newContact?.email);
 
     if (validaNome) {
       Alert.alert("Attention", "There is already a contact with that name")
@@ -61,10 +69,10 @@ export default function Edit() {
         console.log("🚀 ~ handleAddContact ~ validateData:", validateData)
         await contactStorage.save({
           id: paramsId,
-          name: contact?.name,
-          phone: contact?.phone,
-          email: contact?.email,
-          photo: contact?.photo,
+          name: newContact?.name,
+          phone: newContact?.phone,
+          email: newContact?.email,
+          photo: newContact?.photo,
           ative: true,
         })
 
@@ -82,7 +90,6 @@ export default function Edit() {
 
 
   useEffect(() => {
-    console.log("🚀 ~ useEffect ~ paramsId:", paramsId)
     getContact()
   }, [paramsId]);
 
@@ -107,12 +114,12 @@ export default function Edit() {
           <View style={styles.form} >
             <Input
               placeholder="Name"
-              onChangeText={(value) => setContact({ ...contact, name: value })}
-              defaultValue={contact?.name}
+              onChangeText={(value) => setNewContact((contact) => ({ ...contact, name: value }))}
+              value={contact?.name}
             />
             <Input
               placeholder='Phone'
-              onChangeText={(value) => setContact({ ...contact, phone: value })}
+              onChangeText={(value) => setNewContact((contact) => ({ ...contact, phone: value }))}
               defaultValue={contact?.phone}
               autoCapitalize="none"
               autoCorrect={false}
@@ -121,7 +128,7 @@ export default function Edit() {
             />
             <Input
               placeholder="e-mail"
-              onChangeText={(value) => setContact({ ...contact, email: value })}
+              onChangeText={(value) => setNewContact((contact) => ({ ...contact, email: value }))}
               defaultValue={contact?.email}
               autoCapitalize="none"
               autoCorrect={false}

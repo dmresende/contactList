@@ -116,10 +116,5 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
     flexDirection: "row",
     alignItems: "center",
-  },
-  contactInfo:{
-    flex: 1,
-    marginLeft: 10,
-    
   }
 });

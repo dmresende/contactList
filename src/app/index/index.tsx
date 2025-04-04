@@ -8,7 +8,7 @@ import {
   Alert,
   Switch
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MaterialIcons } from '@expo/vector-icons';
 
 import { contactStorage, ContactStorage } from "@/src/storage/contact-storage";
@@ -18,6 +18,7 @@ import { router, useFocusEffect } from "expo-router";
 import { styles } from "./styles";
 import { Colors } from "@/src/constants/Colors";
 import { colors } from "@/styles/Colors";
+import { Searchbar } from "react-native-paper";
 
 
 export type IContact = {
@@ -33,13 +34,27 @@ export default function ContactsScreen() {
   const [showModal, setShowModal] = useState(false);
   const [contact, setContact] = useState<IContact>({} as ContactStorage);
   const [contacts, setContacts] = useState<IContact[]>([]);
+  const [search, setsearch] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
 
 
   const getContacts = async () => {
     try {
       const response = await contactStorage.get();
 
+      response.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
+
+
       setContacts(response);
+
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +63,6 @@ export default function ContactsScreen() {
   const generateRandomPhoto = () => {
     const photoContact = contactStorage.get();
     const a = photoContact.then((value) => {
-      // console.log('value: ', value.length);
     });
 
     if (!photoContact) {
@@ -111,11 +125,35 @@ export default function ContactsScreen() {
     setShowModal(true);
   }
 
+  //INFOR - Responsável por atualizar o status do contato
+  const handleStatus = async () => {
+    setContact({ ...contact });
+
+    await contactStorage.update(contact.id, { ...contact });
+    getContacts();
+    setShowModal(false);
+  }
+
+  //INFOR - Responsável por buscar os contatos ao iniciar a tela
   useFocusEffect(
     useCallback(() => {
       getContacts();
     }, [])
   );
+
+  //INFOR - Responsável por filtrar os contatos ao digitar na barra de pesquisa
+  useEffect(() => {
+    const filteredContacts = contacts.filter((contact) => {
+      return contact.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+    setContacts(filteredContacts);
+
+    if (searchQuery == "") {
+      getContacts();
+    }
+  }, [searchQuery]);
+
+
 
   return (
     <View style={styles.container}>
@@ -128,21 +166,28 @@ export default function ContactsScreen() {
           <TouchableOpacity onPress={() => router.navigate("/add")}>
             <MaterialIcons name="add" size={32} color={"#FFF"} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log('buscar')}>
+          <TouchableOpacity onPress={() => setsearch(!search)}>
             <MaterialIcons name="search" size={32} color={"#FFF"} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => Alert.alert('Atention', 'This feature is not available yet')}>
             <MaterialIcons name="more-vert" size={32} color={"#FFF"} />
           </TouchableOpacity>
+
         </View>
       </View>
+      {search &&
+        <Searchbar
+          placeholder="Search"
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+        />
+      }
 
       {contacts.length == 0
         ?
         <Text style={styles.emptyList} >No contacts found
         </Text>
         :
-        // ver porque nao ta vindo contatos
         <FlatList
           data={contacts}
           keyExtractor={(item) => item.id}
@@ -151,29 +196,37 @@ export default function ContactsScreen() {
               style={styles.contactItem}
               onPress={() => contactDetails(item)}
             >
+
               <Image
                 source={{ uri: generateRandomPhoto(), }}
                 style={styles.contactImage}
               />
-              <Text style={styles.contactText}>{item.name}</Text>
+              <View style={styles.contactInfo}>
+                <Text style={styles.contactText}>{item.name}</Text>
+                <Text >
+                  {item.ative
+                    ? <Text style={styles.active} >Active</Text>
+                    : <Text style={styles.active} >Deactivate</Text>
+                  }
+                </Text>
+              </View>
+
+
             </TouchableOpacity>
           )}
         />
       }
+
 
       <Modal transparent visible={showModal} animationType="slide">
         <View style={styles.modal}>
           <View style={styles.modalContent}>
 
             <View style={styles.modalHeader}>
-
               <Text style={styles.modalCategory}>Details</Text>
-
               <View style={styles.modalHeaderOptions}>
-
                 <TouchableOpacity onPress={() => {
                   showModal ? setShowModal(false) : setShowModal(true)
-
                   handleEditContact(contact.id)
                 }} >
                   <MaterialIcons
@@ -190,7 +243,6 @@ export default function ContactsScreen() {
                   />
                 </TouchableOpacity>
               </View>
-
             </View>
 
             <View style={styles.modalActive}>
@@ -202,7 +254,7 @@ export default function ContactsScreen() {
 
               {/* //TODO - REMOVER, OU VER SE PRECISO REMOVER ESSE TEXT */}
               <Text >
-                {contact.ative == true
+                {contact.ative
                   ? <Text style={styles.active} >Active</Text>
                   : <Text style={styles.active} >Deactivate</Text>
                 }
@@ -219,10 +271,10 @@ export default function ContactsScreen() {
 
             <View style={styles.modalFooter}>
               <OptionButton
-                name="Call"
-                icon="phone"
+                name="Salvar"
+                icon="save"
                 variant="primary"
-                onPress={() => setShowModal(false)}
+                onPress={() => handleStatus()}
               />
               <OptionButton
                 name="Delete"
